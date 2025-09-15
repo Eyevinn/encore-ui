@@ -246,3 +246,15 @@ export default tseslint.config([
   },
 ])
 ```
+
+## Contributing
+
+We welcome contributions! Please feel free to submit a Pull Request.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## About Eyevinn Technology
+
+We are Eyevinn Technology, and we help companies in the TV, media, and entertainment sectors optimize costs and boost profitability through enhanced media solutions. We are independent in a way that we are not commercially tied to any platform or technology vendor. As our way to innovate and push the industry forward, we develop proof-of-concepts and tools. We share things we have learn and code as open-source.

@@ -3,6 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "A beautiful and modern React-based user interface for the Encore video encoding API",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "vite",
