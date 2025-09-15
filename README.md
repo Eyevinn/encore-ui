@@ -2,6 +2,8 @@
 
 A beautiful and modern React-based user interface for the [Encore video encoding API](https://eyevinn.github.io/encore-api-docs/). This application provides an intuitive way to manage video encoding jobs, monitor queue status, and track encoding progress in real-time.
 
+![Screenshot](screenshot.png)
+
 ## Features
 
 ✨ **Modern UI/UX**
