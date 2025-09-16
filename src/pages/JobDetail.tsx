@@ -278,9 +278,6 @@ const JobDetail: React.FC = () => {
                     </div>
                     <div className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                       <p><span className="font-medium">URI:</span> {input.uri}</p>
-                      {input.accessUri && (
-                        <p><span className="font-medium">Access URI:</span> {input.accessUri}</p>
-                      )}
                       {input.seekTo && (
                         <p><span className="font-medium">Seek To:</span> {input.seekTo}s</p>
                       )}
