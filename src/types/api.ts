@@ -80,7 +80,6 @@ export interface Input {
   params: Record<string, string>;
   analyzed?: AudioFile | VideoFile | ImageFile | SubtitleFile;
   copyTs: boolean;
-  accessUri: string;
   seekTo?: number;
 }
 
