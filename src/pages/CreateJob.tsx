@@ -22,16 +22,6 @@ interface JobFormData {
 
 const inputTypes: InputType[] = ['AudioVideo', 'Video', 'Audio'];
 
-const commonProfiles = [
-  'x264-baseline',
-  'x264-high',
-  'x264-animated',
-  'x265-uhd',
-  'av1-streaming',
-  'audio-aac',
-  'audio-opus',
-];
-
 const CreateJob: React.FC = () => {
   const navigate = useNavigate();
   const createJobMutation = useCreateJob();
@@ -152,24 +142,23 @@ const CreateJob: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Encoding Profile <span className="text-red-500">*</span>
                 </label>
-                <select
+                <input
                   {...register('profile', { required: 'Profile is required' })}
+                  list="profile-suggestions"
+                  placeholder="Enter a profile name"
                   className={clsx(
                     'block w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-1 focus:ring-primary-500 focus:border-primary-500',
                     errors.profile
                       ? 'border-red-300'
                       : 'border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white'
                   )}
-                >
-                  {commonProfiles.map(profile => (
-                    <option key={profile} value={profile}>
-                      {profile}
-                    </option>
-                  ))}
-                </select>
+                />
                 {errors.profile && (
                   <p className="mt-1 text-sm text-red-600">{errors.profile.message}</p>
                 )}
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Enter what transcoding profile you want to use
+                </p>
               </div>
 
               <div>
