@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { ConfigContext, type AppConfig } from './config';
 
 const defaultConfig: AppConfig = {
-  encoreApiUrl: import.meta.env.VITE_ENCORE_API_URL || 'http://localhost:8080',
+  encoreApiUrl: import.meta.env.VITE_ENCORE_API_URL || '/',
   bearerToken: import.meta.env.VITE_ENCORE_BEARER_TOKEN || '',
 };
 
