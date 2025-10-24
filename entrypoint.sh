@@ -2,29 +2,36 @@
 set -e
 
 # Set default values for environment variables
-export VITE_ENCORE_API_URL=${VITE_ENCORE_API_URL:-http://localhost:8080}
-export VITE_ENCORE_BEARER_TOKEN=${VITE_ENCORE_BEARER_TOKEN:-}
-export PORT=${PORT:-3000}
+export ENCORE_API_URL=${ENCORE_API_URL:-http://localhost:8080}
+export ENCORE_BEARER_TOKEN=${ENCORE_BEARER_TOKEN:-}
+export OSC_ACCESS_TOKEN=${OSC_ACCESS_TOKEN:-}
+export PORT=${PORT:-3001}
+export NODE_ENV=${NODE_ENV:-production}
 
-echo "🚀 Building Encore UI with configuration:"
-echo "📡 VITE_ENCORE_API_URL=${VITE_ENCORE_API_URL}"
-echo "🔑 VITE_ENCORE_BEARER_TOKEN=${VITE_ENCORE_BEARER_TOKEN:+[CONFIGURED]}"
-echo "🌐 PORT=${PORT}"
-echo ""
+echo "🚀 Starting Encore UI Unified Application"
+echo "📡 Encore API URL: ${ENCORE_API_URL}"
 
-# Build the application with environment variables
-echo "📦 Building application..."
-npm run build
-
-# Check if build was successful
-if [ ! -d "dist" ]; then
-    echo "❌ Build failed: dist directory not found"
-    exit 1
+# Authentication method logging
+if [ -n "${ENCORE_BEARER_TOKEN}" ]; then
+  echo "🔒 Authentication: Static bearer token configured"
+elif [ -n "${OSC_ACCESS_TOKEN}" ]; then
+  echo "🔑 Authentication: OSC dynamic token generation enabled"
+else
+  echo "⚠️  Authentication: No authentication configured"
 fi
 
-echo "✅ Build complete!"
+echo "🌐 Server Port: ${PORT}"
+echo "🏗️  Environment: ${NODE_ENV}"
 echo ""
 
-# Serve the built application
-echo "🌐 Starting server on port ${PORT}..."
-exec serve -s dist -l ${PORT} --no-clipboard
+# Check if frontend build exists, build if not
+if [ ! -d "dist" ]; then
+    echo "📦 Frontend build not found, building application..."
+    npm run build
+    echo "✅ Build complete!"
+    echo ""
+fi
+
+# Start the unified Express server
+echo "🌐 Starting unified server..."
+exec npm run server:start

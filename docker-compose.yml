@@ -4,14 +4,16 @@ services:
   encore-ui:
     build: .
     ports:
-      - "${HOST_PORT:-3000}:${PORT:-3000}"
+      - "${HOST_PORT:-3001}:${PORT:-3001}"
     environment:
-      - VITE_ENCORE_API_URL=${VITE_ENCORE_API_URL:-http://localhost:8080}
-      - VITE_ENCORE_BEARER_TOKEN=${VITE_ENCORE_BEARER_TOKEN:-}
-      - PORT=${PORT:-3000}
+      - ENCORE_API_URL=${ENCORE_API_URL:-http://localhost:8080}
+      - ENCORE_BEARER_TOKEN=${ENCORE_BEARER_TOKEN:-}
+      - OSC_ACCESS_TOKEN=${OSC_ACCESS_TOKEN:-}
+      - PORT=${PORT:-3001}
+      - NODE_ENV=${NODE_ENV:-production}
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT:-3000}/"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:${PORT:-3001}/health"]
       interval: 30s
       timeout: 10s
       retries: 3

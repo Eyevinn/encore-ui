@@ -1,10 +1,7 @@
-# Encore UI - Runtime Build Dockerfile
-# This Dockerfile builds the app at runtime with provided environment variables
+# Encore UI - Unified Application Dockerfile
+# Single container that builds frontend and runs Express backend serving both API and frontend
 
 FROM node:20-alpine
-
-# Install serve globally for serving the built app
-RUN npm install -g serve
 
 # Set working directory
 WORKDIR /app
@@ -15,9 +12,13 @@ RUN addgroup -g 1001 -S nodejs && \
 
 # Copy package files
 COPY --chown=nextjs:nodejs package*.json ./
+COPY --chown=nextjs:nodejs server/package*.json ./server/
 
-# Install all dependencies (needed for build)
+# Install frontend dependencies
 RUN npm ci --ignore-scripts && npm cache clean --force
+
+# Install backend dependencies
+RUN cd server && npm ci --ignore-scripts && npm cache clean --force
 
 # Copy source code
 COPY --chown=nextjs:nodejs . .
@@ -30,17 +31,20 @@ RUN chmod +x /app/entrypoint.sh && \
 # Switch to non-root user
 USER nextjs
 
-# Expose default port (can be overridden at runtime)
-EXPOSE 3000
+# Expose default port
+EXPOSE 3001
 
-# Health check (uses PORT environment variable)
+# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT}/ || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:${PORT:-3001}/health || exit 1
 
-# Set environment variables with defaults
-ENV VITE_ENCORE_API_URL=http://localhost:8080
-ENV PORT=3000
+# Set environment variables with defaults for backend
+ENV ENCORE_API_URL=http://localhost:8080
+ENV PORT=3001
 ENV NODE_ENV=production
+# Authentication environment variables (optional)
+# ENV ENCORE_BEARER_TOKEN=
+# ENV OSC_ACCESS_TOKEN=
 
 # Use the entrypoint script
 ENTRYPOINT ["/app/entrypoint.sh"]

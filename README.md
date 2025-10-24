@@ -47,26 +47,104 @@ A beautiful and modern React-based user interface for the [Encore video encoding
 
 ## Quick Start
 
-1. **Clone and install dependencies:**
+### Option 1: Unified Application (Recommended)
+
+Single server that serves both frontend and API proxy - no CORS issues:
+
+1. **Install all dependencies:**
    ```bash
-   npm install
+   npm run setup
    ```
 
-2. **Start the development server:**
+2. **Configure the application:**
    ```bash
-   npm run dev
+   cd server
+   cp .env.example .env
+   # Edit .env and set your Encore API URL and bearer token
+   ```
+
+3. **Start the unified application:**
+   ```bash
+   npm start
+   ```
+
+4. **Open your browser:**
+   Navigate to `http://localhost:3001` to access the Encore UI
+
+### Option 2: Development Mode
+
+For development with hot-reload (frontend and backend run separately):
+
+1. **Install dependencies:**
+   ```bash
+   npm run setup
+   ```
+
+2. **Start development servers:**
+   ```bash
+   npm run full:dev
    ```
 
 3. **Open your browser:**
    Navigate to `http://localhost:5173` to access the Encore UI
 
+### Option 3: Frontend Only
+
+If you prefer to connect directly to the Encore API (may encounter CORS issues):
+
+1. **Install dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure environment:**
+   ```bash
+   cp .env.example .env.local
+   # Edit .env.local and set VITE_ENCORE_API_URL to your Encore API
+   ```
+
+3. **Start the development server:**
+   ```bash
+   npm run dev
+   ```
+
+4. **Open your browser:**
+   Navigate to `http://localhost:5173` to access the Encore UI
+
 ## Configuration
 
-### API Server Configuration
+### Unified Application Configuration (Recommended)
 
-The application connects to the Encore API at `http://localhost:8080` by default. You can configure the API URL in several ways:
+When using the unified application, configure the backend server to proxy requests to your Encore API:
 
-**Option 1: Environment Variables (Recommended)**
+1. **Configure backend environment:**
+   ```bash
+   cd server
+   cp .env.example .env
+   ```
+
+2. **Edit `server/.env`:**
+   ```env
+   ENCORE_API_URL=http://your-encore-server:8080
+   
+   # Authentication - choose one method:
+   # Option 1: Static bearer token
+   ENCORE_BEARER_TOKEN=your-auth-token-here
+   
+   # Option 2: OSC Dynamic token (recommended for OSC environments)
+   # OSC_ACCESS_TOKEN=your-osc-access-token-here
+   
+   PORT=3001
+   ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+   ```
+
+3. **Frontend automatically uses relative paths** (`/api`) when served from the unified server
+
+### Direct API Connection (Alternative)
+
+If you're not using the backend proxy, you can configure the frontend to connect directly:
+
+**Option 1: Environment Variables**
 ```bash
 # Copy the example environment file
 cp .env.example .env.local
@@ -84,7 +162,18 @@ VITE_ENCORE_BEARER_TOKEN=your-auth-token-here
 
 ### Authentication
 
-The application supports optional bearer token authentication:
+The application supports multiple authentication methods:
+
+#### Backend Authentication (Recommended)
+When using the unified backend server, authentication is handled server-side with two options:
+
+- **Static Bearer Token**: Provide a fixed token via `ENCORE_BEARER_TOKEN` environment variable
+- **OSC Dynamic Tokens**: Provide an OSC access token via `OSC_ACCESS_TOKEN` for automatic service token generation
+- **Token Rotation**: OSC tokens are generated fresh for each request, handling automatic rotation
+- **Security**: Tokens are never exposed to the frontend when using the backend proxy
+
+#### Frontend Authentication (Direct API Connection)
+When connecting directly to the Encore API:
 
 - **Bearer Token**: Add an optional bearer token for API authentication
 - **Secure Storage**: Tokens are stored securely in browser localStorage
@@ -99,7 +188,7 @@ VITE_ENCORE_API_URL=http://production-server:8080 VITE_ENCORE_BEARER_TOKEN=token
 
 ## Docker Deployment
 
-The application can be deployed using Docker with runtime environment configuration:
+The application is deployed as a single unified container that serves both frontend and backend:
 
 ### Docker Build & Run
 
@@ -110,22 +199,29 @@ docker build -t encore-ui .
 
 **Run with default configuration:**
 ```bash
-docker run -p 3000:3000 encore-ui
+docker run -p 3001:3001 encore-ui
 ```
 
 **Run with custom configuration:**
 ```bash
-docker run -p 3000:3000 \
-  -e VITE_ENCORE_API_URL=http://your-encore-server:8080 \
-  -e VITE_ENCORE_BEARER_TOKEN=your-token-here \
+# Using static bearer token
+docker run -p 3001:3001 \
+  -e ENCORE_API_URL=http://your-encore-server:8080 \
+  -e ENCORE_BEARER_TOKEN=your-token-here \
+  encore-ui
+
+# Using OSC dynamic tokens
+docker run -p 3001:3001 \
+  -e ENCORE_API_URL=http://your-encore-server:8080 \
+  -e OSC_ACCESS_TOKEN=your-osc-token-here \
   encore-ui
 ```
 
 **Run on different port:**
 ```bash
-docker run -p 8080:8080 \
-  -e PORT=8080 \
-  -e VITE_ENCORE_API_URL=http://your-encore-server:8080 \
+docker run -p 8080:3001 \
+  -e PORT=3001 \
+  -e ENCORE_API_URL=http://your-encore-server:8080 \
   encore-ui
 ```
 
@@ -134,8 +230,10 @@ docker run -p 8080:8080 \
 **Using docker-compose.yml:**
 ```bash
 # Set environment variables (optional)
-export VITE_ENCORE_API_URL=http://your-encore-server:8080
-export VITE_ENCORE_BEARER_TOKEN=your-token-here
+export ENCORE_API_URL=http://your-encore-server:8080
+export ENCORE_BEARER_TOKEN=your-token-here
+# OR
+export OSC_ACCESS_TOKEN=your-osc-token-here
 
 # Start the application
 docker-compose up -d
@@ -143,9 +241,13 @@ docker-compose up -d
 
 **Using .env file with Docker Compose:**
 ```bash
-# Create a .env file
-echo "VITE_ENCORE_API_URL=http://your-encore-server:8080" > .env
-echo "VITE_ENCORE_BEARER_TOKEN=your-token-here" >> .env
+# Create a .env file with static token
+echo "ENCORE_API_URL=http://your-encore-server:8080" > .env
+echo "ENCORE_BEARER_TOKEN=your-token-here" >> .env
+
+# OR create with OSC token
+echo "ENCORE_API_URL=http://your-encore-server:8080" > .env
+echo "OSC_ACCESS_TOKEN=your-osc-token-here" >> .env
 
 # Start with docker-compose
 docker-compose up -d
