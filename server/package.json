@@ -1,0 +1,22 @@
+{
+  "name": "encore-ui-server",
+  "version": "1.0.0",
+  "description": "Backend proxy server for Encore UI to handle CORS and API requests",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
+    "@osaas/client-core": "^0.19.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/cors": "^2.8.17"
+  }
+}

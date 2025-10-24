@@ -30,8 +30,8 @@ const CreateJob: React.FC = () => {
   const { register, control, handleSubmit, formState: { errors } } = useForm<JobFormData>({
     defaultValues: {
       baseName: '',
-      profile: 'x264-high',
-      outputFolder: '/output',
+      profile: 'program',
+      outputFolder: '/usercontent',
       priority: 0,
       debugOverlay: false,
       inputs: [{
