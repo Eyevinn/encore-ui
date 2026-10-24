@@ -4,6 +4,9 @@
   "description": "Backend proxy server for Encore UI to handle CORS and API requests",
   "type": "module",
   "main": "server.js",
+  "engines": {
+    "node": "^22.23.4 || >=24.22.1"
+  },
   "scripts": {
     "start": "node server.js",
     "dev": "node --watch server.js"

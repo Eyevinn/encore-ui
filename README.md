@@ -41,7 +41,7 @@ A beautiful and modern React-based user interface for the [Encore video encoding
 
 ## Prerequisites
 
-- Node.js (v16 or later)
+- Node.js (v22.23.4 or later, or v24.22.1 or later)
 - npm or yarn package manager
 - Running Encore API server (default: http://localhost:8080)
 
